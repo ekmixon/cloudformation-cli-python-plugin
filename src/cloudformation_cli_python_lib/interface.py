@@ -70,9 +70,7 @@ class BaseModel:
     def _serialize_item(self, v: Any) -> Any:
         if isinstance(v, list):
             return self._serialize_list(v)
-        if isinstance(v, BaseModel):
-            return v._serialize()  # pylint: disable=protected-access
-        return v
+        return v._serialize() if isinstance(v, BaseModel) else v
 
     def _serialize_list(self, src_list: List[Any]) -> List[Any]:
         return [self._serialize_item(i) for i in src_list]

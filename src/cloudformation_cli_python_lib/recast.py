@@ -126,6 +126,4 @@ def get_forward_ref_type() -> Any:
     # ignoring mypy on the import as it catches (_)ForwardRef as invalid, use for
     # introspection is valid:
     # https://docs.python.org/3/library/typing.html#typing.ForwardRef
-    if "ForwardRef" in dir(typing):
-        return typing.ForwardRef  # type: ignore
-    return typing._ForwardRef  # type: ignore
+    return typing.ForwardRef if "ForwardRef" in dir(typing) else typing._ForwardRef

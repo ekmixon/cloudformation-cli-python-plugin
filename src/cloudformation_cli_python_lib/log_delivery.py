@@ -27,10 +27,14 @@ class ProviderLogHandler(logging.Handler):
 
     @classmethod
     def _get_existing_logger(cls) -> Optional["ProviderLogHandler"]:
-        for handler in logging.getLogger().handlers:
-            if isinstance(handler, cls):
-                return handler
-        return None
+        return next(
+            (
+                handler
+                for handler in logging.getLogger().handlers
+                if isinstance(handler, cls)
+            ),
+            None,
+        )
 
     @classmethod
     def setup(

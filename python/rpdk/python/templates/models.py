@@ -25,9 +25,7 @@ T = TypeVar("T")
 
 
 def set_or_none(value: Optional[Sequence[T]]) -> Optional[AbstractSet[T]]:
-    if value:
-        return set(value)
-    return None
+    return set(value) if value else None
 
 
 @dataclass

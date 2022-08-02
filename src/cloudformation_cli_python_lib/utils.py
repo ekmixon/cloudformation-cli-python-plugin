@@ -73,8 +73,7 @@ class RequestData:
         for key in json_data:
             if not key.endswith("Credentials"):
                 continue
-            creds = json_data.get(key)
-            if creds:
+            if creds := json_data.get(key):
                 setattr(req_data, key, Credentials(**creds))
         return req_data
 
@@ -146,16 +145,20 @@ class UnmodelledRequest:
         return BaseResourceHandlerRequest(
             clientRequestToken=self.clientRequestToken,
             desiredResourceState=model_cls._deserialize(self.desiredResourceState),
-            previousResourceState=model_cls._deserialize(self.previousResourceState),
+            previousResourceState=model_cls._deserialize(
+                self.previousResourceState
+            ),
             desiredResourceTags=self.desiredResourceTags,
             previousResourceTags=self.previousResourceTags,
             systemTags=self.systemTags,
             previousSystemTags=self.previousSystemTags,
             awsAccountId=self.awsAccountId,
             logicalResourceIdentifier=self.logicalResourceIdentifier,
-            typeConfiguration=None
-            if not type_configuration_model_cls
-            else type_configuration_model_cls._deserialize(self.typeConfiguration),
+            typeConfiguration=type_configuration_model_cls._deserialize(
+                self.typeConfiguration
+            )
+            if type_configuration_model_cls
+            else None,
             nextToken=self.nextToken,
             stackId=self.stackId,
             region=self.region,
@@ -170,9 +173,7 @@ class UnmodelledRequest:
         if region.startswith("cn"):
             return "aws-cn"
 
-        if region.startswith("us-gov"):
-            return "aws-gov"
-        return "aws"
+        return "aws-gov" if region.startswith("us-gov") else "aws"
 
 
 class LambdaContext:
@@ -183,9 +184,11 @@ class LambdaContext:
 def deserialize_list(
     json_data: Union[List[Any], Dict[str, Any]], inner_dataclass: Any
 ) -> Optional[List[Any]]:
-    if not json_data:
-        return None
-    return [_deser_item(item, inner_dataclass) for item in json_data]
+    return (
+        [_deser_item(item, inner_dataclass) for item in json_data]
+        if json_data
+        else None
+    )
 
 
 def _deser_item(item: Any, inner_dataclass: Any) -> Any:

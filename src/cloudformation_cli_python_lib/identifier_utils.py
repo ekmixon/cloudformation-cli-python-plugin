@@ -49,11 +49,10 @@ def generate_resource_identifier(
 
     hash_value: str = _get_hash(strinct_client_request_token)
 
-    identifier: str = (
+    return (
         clean_stack_name[:chars_for_stack_name]
         + ("-" if separate else "")
         + strinct_logical_resource_id[:chars_for_resource_name]
         + "-"
         + hash_value[:HASH_LENGTH]
     )
-    return identifier
